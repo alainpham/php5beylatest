@@ -26,8 +26,8 @@ docker run -it --rm \
 docker run --rm \
   -e BEYLA_OPEN_PORT=80 \
   -e BEYLA_TRACE_PRINTER=text \
-  -e OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
-  -e OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+  -e OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
+  -e OTEL_EXPORTER_OTLP_ENDPOINT=http://172.17.0.1:4318 \
   --pid="container:phpapi" \
   --privileged \
   grafana/beyla:latest
