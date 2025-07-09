@@ -24,7 +24,7 @@ docker run -it --rm \
 
 
 docker run --rm \
-  -e BEYLA_OPEN_PORT=8443 \
+  -e BEYLA_OPEN_PORT=80 \
   -e BEYLA_TRACE_PRINTER=text \
   --pid="container:phpapi" \
   --privileged \
