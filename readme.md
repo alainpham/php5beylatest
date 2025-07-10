@@ -14,6 +14,7 @@ docker run -d \
 docker cp init.sql pgdb:/init.sql
 docker exec -u postgres pgdb psql -U user  -d testdb -f /init.sql
 
+docker run -d --name httpbin -p 8081:80 kennethreitz/httpbin
 
 docker build -t php56-api . && \
 docker run -it --rm \

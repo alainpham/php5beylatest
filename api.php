@@ -19,9 +19,9 @@ if ($request === '/api/users') {
     $stmt = $pdo->query("SELECT * FROM users");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $weather = file_get_contents('https://wttr.in/?format=3');
+    $ip = file_get_contents('http://httpbin/ip');
     foreach ($users as &$user) {
-        $user['weather'] = $weather;
+        $user['ip'] = $ip;
     }
     unset($user);
     echo json_encode($users);
