@@ -2,6 +2,12 @@
 docker network create primenet
 
 docker run -d \
+  --name otel-lgtm \
+  --network primenet \
+  -p 3001:3000 \
+  grafana/otel-lgtm
+
+docker run -d \
   --name pgdb \
   --network primenet \
   -e POSTGRES_USER=user \
@@ -30,7 +36,7 @@ docker run -d \
   -e BEYLA_OPEN_PORT=80 \
   -e BEYLA_TRACE_PRINTER=text \
   -e OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
-  -e OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4318 \
+  -e OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-lgtm:4318 \
   --pid="container:phpapi" \
   --privileged \
   grafana/beyla:latest
@@ -38,6 +44,7 @@ docker run -d \
 
 remove everything
 
-rm -f pgdb
-rm -f httpbin
-rm -f beyla
+docker rm -f otel-lgtm
+docker rm -f pgdb
+docker rm -f httpbin
+docker rm -f beyla
