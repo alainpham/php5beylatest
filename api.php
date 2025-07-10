@@ -19,7 +19,8 @@ if ($request === '/api/users') {
     $stmt = $pdo->query("SELECT * FROM users");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $ip = file_get_contents('http://httpbin/ip');
+    $resp = file_get_contents('http://httpbin/ip');
+    $ip = json_decode($resp, true)['origin'];
     foreach ($users as &$user) {
         $user['ip'] = $ip;
     }

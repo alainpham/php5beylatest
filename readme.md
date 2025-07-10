@@ -22,14 +22,14 @@ docker exec -u postgres pgdb psql -U user  -d testdb -f /init.sql
 
 docker run -d --name httpbin --network primenet kennethreitz/httpbin
 
-docker build -t php56-api . && \
+docker rm -f phpapi && docker build -t php56-api . \
+&& \
 docker run -d \
   --name phpapi \
   --network primenet \
   -p 8080:80 \
-  php56-api
-
-
+  php56-api \
+&& \
 docker run -d \
   --name beyla \
   --network primenet \
@@ -47,4 +47,5 @@ remove everything
 docker rm -f otel-lgtm
 docker rm -f pgdb
 docker rm -f httpbin
+docker rm -f phpapi
 docker rm -f beyla
