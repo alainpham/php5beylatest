@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: phptest
+  name: php5test
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: phptest
+      app: php5test
   template:
     metadata:
       annotations:
-        resource.opentelemetry.io/service.name: "phptest"
-        profiles.grafana.com/php.enabled: "true"
+        resource.opentelemetry.io/service.name: "php5test"
+        profiles.grafana.com/cpu.ebpf.enabled: "true"
       labels:
-        app: phptest
+        app: php5test
     spec:
       containers:
-      - name: phptest
-        image: alainpham/phptest
+      - name: php5test
+        image: alainpham/php5test:latest
         imagePullPolicy: "Always"
         env:
           - name: POD_NAME
@@ -29,29 +29,101 @@ spec:
               fieldRef:
                 fieldPath: metadata.namespace
           - name: APPLICATION_NAME
-            value: phptest
+            value: php5test
           - name: OTEL_EXPORTER_OTLP_PROTOCOL
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://grafana-k8s-monitoring-alloy-receiver.default.svc.cluster.local:4318
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: "service.name=phptest,service.namespace=$(POD_NAMESPACE),service.instance.id=$(POD_NAME),service.version=1.0.0"
+            value: "service.name=php5test,service.namespace=$(POD_NAMESPACE),service.instance.id=$(POD_NAME),service.version=1.0.0"
         ports:
           - containerPort: 8080
           - containerPort: 8081
         livenessProbe:
-          httpGet:
-            path: /actuator/health/liveness
-            port: 8081
+          tcpSocket:
+            port: 80
           initialDelaySeconds: 0
           successThreshold: 1
           periodSeconds: 10
           failureThreshold: 40 
         readinessProbe:
-          httpGet:
-            path: /actuator/health/readiness
-            port: 8081
+          tcpSocket:
+            port: 80
           initialDelaySeconds: 0
           successThreshold: 1
           periodSeconds: 10
           failureThreshold: 40 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpbin
+  template:
+    metadata:
+      labels:
+        app: httpbin
+    spec:
+      containers:
+      - name: httpbin
+        image: kennethreitz/httpbin
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env: []
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpbin
+spec:
+  selector:
+    app: httpbin
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgdb
+  template:
+    metadata:
+      labels:
+        app: pgdb
+    spec:
+      containers:
+      - name: pgdb
+        image: postgres:9
+        imagePullPolicy: Always
+        env:
+          - name: POSTGRES_USER
+            value: "user"
+          - name: POSTGRES_PASSWORD
+            value: "password"
+          - name: POSTGRES_DB
+            value: "testdb"
+        ports:
+          - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgdb
+spec:
+  selector:
+    app: pgdb
+  ports:
+    - protocol: TCP
+      port: 5433
+      targetPort: 5432
