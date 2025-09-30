@@ -19,7 +19,12 @@ if ($request === '/api/users') {
     $stmt = $pdo->query("SELECT * FROM users");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    doDummyStuff();
+
     $resp = file_get_contents('http://httpbin/ip');
+
+    doSomeOtherDummyStuff();
+    
     $ip = json_decode($resp, true)['origin'];
     foreach ($users as &$user) {
         $user['ip'] = $ip;
@@ -32,3 +37,22 @@ if ($request === '/api/users') {
 }
 
 
+function doDummyStuff() {
+    // Dummy logic: generate a random number and return a message
+    $number = rand(1, 100);
+    usleep(max(0, 30000 - (microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000000));
+    return "Dummy stuff done! Random number: $number";
+
+}
+
+
+function doSomeOtherDummyStuff() {
+    // Dummy logic: generate a random number and return a message
+    $number = rand(1, 100);
+    usleep(max(0, 50000 - (microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000000));
+    return "Dummy stuff done! Random number: $number";
+
+}
+
+
+?>
