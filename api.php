@@ -55,6 +55,22 @@ function doDummyStuff() {
     // Dummy logic: generate a random number and return a message
     $number = rand(1, 100);
     usleep(max(0, 30000 - (microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000000));
+    $start = microtime(true);
+    $primes = [];
+    $n = 2;
+    while (microtime(true) - $start < 2) {
+        $isPrime = true;
+        for ($i = 2; $i <= sqrt($n); $i++) {
+            if ($n % $i === 0) {
+                $isPrime = false;
+                break;
+            }
+        }
+        if ($isPrime) {
+            $primes[] = $n;
+        }
+        $n++;
+    }
     return "Dummy stuff done! Random number: $number";
 
 }

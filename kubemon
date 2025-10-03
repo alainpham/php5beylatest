@@ -91,27 +91,12 @@ profiling:
   enabled: true
   ebpf:
     enabled: true
-    annotationSelectors:
-      profiles.grafana.com/cpu.ebpf.enabled: "true"
     namespaces:
       - apps
   java:
     enabled: true
-    annotationSelectors:
-      profiles.grafana.com/java.enabled: "true"
-    extraDiscoveryRules: |
-      rule {
-        source_labels = ["__meta_kubernetes_pod_annotation_resource_opentelemetry_io_service_name"]
-        regex = "(.+)"
-        target_label = "service_name"
-      }
-    
-      rule {
-        action="replace"    
-        regex = "(.+)"
-        source_labels = ["__meta_kubernetes_pod_annotation_resource_opentelemetry_io_service_namespace"]
-        target_label = "namespace"
-      }
+    namespaces:
+      - apps
   pprof:
     enabled: false
 integrations:
@@ -127,24 +112,13 @@ integrations:
             - alloy-profiles
 alloy-metrics:
   enabled: true
-  alloy:
-    image:
-      tag:v1.11.0
 alloy-singleton:
   enabled: true
-  alloy:
-    image:
-      tag:v1.11.0
 alloy-logs:
   enabled: true
-  alloy:
-    image:
-      tag:v1.11.0
 alloy-receiver:
   enabled: true
   alloy:
-    image:
-      tag:v1.11.0
     extraPorts:
       - name: otlp-grpc
         port: 4317
@@ -160,7 +134,6 @@ alloy-receiver:
         protocol: TCP
 alloy-profiles:
   enabled: true
-  alloy:
-    image:
-      tag:v1.11.0
+  image:
+    tag: v1.11.0
 EOF
